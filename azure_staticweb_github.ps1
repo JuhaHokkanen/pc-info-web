@@ -43,7 +43,11 @@ $htmlContent = @"
         body {
             font-family: Arial, sans-serif;
         }
+        h1,h2,p {
+        text-align: center;
+        }
         table {
+            margin: 0 auto;
             width: 90%;
             border-collapse: collapse;
         }
