@@ -1,5 +1,5 @@
 # Juha Hokkanen 9.2.2025
-# PC info scripti joka kerää tietoja tietokoneesta ja lähettää tiedot Githubin kautta Azuren static sivulle.
+# PC info scripti joka kerää tietoja tietokoneesta ja lähettää tiedot Githubin kautta Azuren staattiselle sivulle.
 
 # Kerää järjestelmätiedot
 $computerName = $env:COMPUTERNAME
