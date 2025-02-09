@@ -44,7 +44,7 @@ $htmlContent = @"
             font-family: Arial, sans-serif;
         }
         table {
-            width: 100%;
+            width: 90%;
             border-collapse: collapse;
         }
         table, th, td {
