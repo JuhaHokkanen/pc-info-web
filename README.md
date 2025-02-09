@@ -1,1 +1,1 @@
-# pc-info-web
+# PC info web
