@@ -23,7 +23,7 @@ $biosInfoManufacturer = $bios.Manufacturer
 $biosInfoVersion = $bios.BIOSVersion
 $biosInfoReleaseDate = $bios.ReleaseDate
 
-# Kerää nykyisen käyttäjän kansio
+# Kerää nykyisen käyttäjän kansion koon
 $currentUserPath = $env:USERPROFILE
 $userFolderSize = (Get-ChildItem -Path $currentUserPath -Recurse -File | Measure-Object -Property Length -Sum).Sum
 $userFolderSizeGB = [math]::Round($userFolderSize / 1GB, 2)
@@ -115,9 +115,6 @@ Write-Host "ComputerInfo.html kopioitu GitHub-repositorioosi."
 
 # Siirry paikalliseen GitHub-repositorioosi
 Set-Location -Path $localRepoPath
-
-# Päivitä paikallinen repository ennen päivityksen työntämistä GitHubiin
-#git pull origin main
 
 # Lisää index.html tiedosto versionhallintaan ja tee commit
 git add index.html
