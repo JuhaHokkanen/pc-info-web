@@ -1,0 +1,23 @@
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+    </style>
+</head>
