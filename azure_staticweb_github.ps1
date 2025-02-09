@@ -14,7 +14,19 @@ $totalMemory = [math]::Round((Get-CimInstance -ClassName Win32_ComputerSystem).T
 
 $gpu = Get-CimInstance -ClassName Win32_VideoController
 $gpuName = $gpu[0].Name
-$gpuMemoryGB = if ($gpu[0].AdapterRAM) {[math]::Round($gpu[0].AdapterRAM / 1GB, 2)} else {0}
+
+$bios = Get-CimInstance -ClassName Win32_BIOS
+$biosInfoManufacturer = $bios.Manufacturer
+$biosInfoVersion = $bios.BIOSVersion
+$biosInfoReleaseDate = $bios.ReleaseDate
+
+# Kerää nykyisen käyttäjän kansio
+$currentUserPath = $env:USERPROFILE
+$userFolderSize = (Get-ChildItem -Path $currentUserPath -Recurse -File | Measure-Object -Property Length -Sum).Sum
+$userFolderSizeGB = [math]::Round($userFolderSize / 1GB, 2)
+
+# Hanki nykyinen päivämäärä ja kellonaika
+$currentDateTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
 # Luo HTML-sisältö
 $htmlContent = @"
@@ -24,6 +36,27 @@ $htmlContent = @"
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Computer Information</title>
+<style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     <h1>Computer Information</h1>
@@ -37,13 +70,25 @@ $htmlContent = @"
         <tr><th>Processor Threads</th><td>$processorThreads</td></tr>
         <tr><th>Total Memory (GB)</th><td>$totalMemory</td></tr>
         <tr><th>GPU</th><td>$gpuName</td></tr>
-        <tr><th>GPU Memory (GB)</th><td>$gpuMemoryGB</td></tr>
+        <tr><th>BIOS Manufacturer</th><td>$biosInfoManufacturer</td></tr>
+        <tr><th>BIOS Version</th><td>$biosInfoVersion</td></tr>
+        <tr><th>BIOS Release date</th><td>$biosInfoReleaseDate</td></tr>
+     </table>
+    <h2>Current User Folder Size</h2>
+    <table border="1">
+        <tr><th>User</th><th>Size (GB)</th></tr>
+        <tr><td>$env:USERNAME</td><td>$userFolderSizeGB</td></tr>
     </table>
+    <h2>Data Retrieved At</h2>
+    <p>$currentDateTime</p>
+    <footer>
+        <p>&copy; 2025 Juha Hokkanen. All rights reserved.</p>
+    </footer>
 </body>
 </html>
 "@
 
-# Varmista, että C:\Temp hakemisto on olemassa tai käytä muuta polkua
+# Varmista, että C:\Temp hakemisto on olemassa
 $htmlPath = "C:\Temp\ComputerInfo.html"
 if (-not (Test-Path -Path "C:\Temp")) {
     New-Item -Path "C:\" -Name "Temp" -ItemType Directory
@@ -56,7 +101,6 @@ Write-Host "HTML-tiedosto tallennettu polkuun $htmlPath"
 
 # GitHub-repositorio
 $localRepoPath = "C:\Users\home\OneDrive\Documents\scriptit\Uusi PC INFO"  # Paikallinen polku GitHub-repositoriosi
-$githubRepoUrl = "https://github.com/JuhaHokkanen/pc-info-web.git"  # GitHub-repositoryn URL
 
 # Kopioi HTML-tiedosto GitHub-repositoriosi kansioon
 Copy-Item $htmlPath -Destination "$localRepoPath\index.html"
@@ -65,11 +109,18 @@ Write-Host "ComputerInfo.html kopioitu GitHub-repositorioosi."
 # Siirry paikalliseen GitHub-repositorioosi
 Set-Location -Path $localRepoPath
 
-# Lisää vain index.html tiedosto versionhallintaan
+# Päivitä paikallinen repository ennen päivityksen työntämistä GitHubiin
+git pull origin main
+
+# Lisää index.html tiedosto versionhallintaan ja tee commit
 git add index.html
-git commit -m "Päivitetty ComputerInfo.html"
+git commit -m "Päivitetty ComputerInfo.html $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+
+# Puske muutokset GitHubiin
 git push origin main
 
 Write-Host "Tietokoneen tiedot päivitetty GitHubiin."
 
-# GitHubin päivitys käynnistää automaattisesti Azure Static Web App -sovelluksen päivityksen.
+# Avataan sivusto selaimessa
+$webAppUrl = "https://lively-tree-073188d03.4.azurestaticapps.net/"
+Start-Process $webAppUrl
