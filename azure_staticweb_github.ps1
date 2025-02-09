@@ -117,11 +117,11 @@ Write-Host "ComputerInfo.html kopioitu GitHub-repositorioosi."
 Set-Location -Path $localRepoPath
 
 # Päivitä paikallinen repository ennen päivityksen työntämistä GitHubiin
-git pull origin main
+#git pull origin main
 
 # Lisää index.html tiedosto versionhallintaan ja tee commit
 git add index.html
-git commit -m "Päivitetty ComputerInfo.html $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+git commit -m "Päivitetty ComputerInfo.html $currentDateTime"
 
 # Puske muutokset GitHubiin
 git push origin main
