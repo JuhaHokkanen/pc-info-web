@@ -26,8 +26,9 @@ try {
 
     # Kerää nykyisen käyttäjän kansion koon
     $currentUserPath = $env:USERPROFILE
-    $userFolderSize = (Get-ChildItem -Path $currentUserPath -Recurse -File | Measure-Object -Property Length -Sum).Sum
+    $userFolderSize = robocopy $currentUserPath NULL /L /BYTES /S | Select-String "Bytes : " | ForEach-Object { ($_ -split ":")[1].Trim() }
     $userFolderSizeGB = [math]::Round($userFolderSize / 1GB, 2)
+
 
     # Kerää C-kovalevyn koko
     $cDrive = Get-PSDrive -Name C
@@ -78,7 +79,7 @@ $htmlContent = @"
         <tr><th>User</th><th>Size (GB)</th></tr>
         <tr><td>$env:USERNAME</td><td>$userFolderSizeGB</td></tr>
     </table>
-    <h2>C-Drive Used Space</h2>
+    <h2>C-drive Used Space</h2>
     <table>
         <tr><th>Drive</th><th>Used Space (GB)</th></tr>
         <tr><td>C:</td><td>$cDriveSizeGB</td></tr>
