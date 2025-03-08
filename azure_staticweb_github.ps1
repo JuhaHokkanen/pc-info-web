@@ -78,7 +78,7 @@ $htmlContent = @"
         <tr><th>User</th><th>Size (GB)</th></tr>
         <tr><td>$env:USERNAME</td><td>$userFolderSizeGB</td></tr>
     </table>
-    <h2>C Drive Used Space</h2>
+    <h2>C-Drive Used Space</h2>
     <table>
         <tr><th>Drive</th><th>Used Space (GB)</th></tr>
         <tr><td>C:</td><td>$cDriveSizeGB</td></tr>
@@ -99,6 +99,8 @@ if (-not (Test-Path -Path "C:\Temp")) {
 }
 $htmlContent | Out-File -FilePath $htmlPath
 Write-Host "HTML-tiedosto tallennettu polkuun $htmlPath"
+
+Start-Process "C:\Temp\ComputerInfo.html"
 
 # Tarkista verkkosivun saavutettavuus ennen avaamista
 $webAppUrl = "https://lively-tree-073188d03.4.azurestaticapps.net/"
