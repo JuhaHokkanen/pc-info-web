@@ -102,6 +102,24 @@ Write-Host "HTML-tiedosto tallennettu polkuun $htmlPath"
 
 Start-Process "C:\Temp\ComputerInfo.html"
 
+# Päivitä tiedot GitHub-repositorioon
+$localRepoPath = "$env:USERPROFILE\OneDrive\Documents\scriptit\Uusi PC INFO"
+if (-not (Test-Path -Path $localRepoPath)) {
+    Write-Host "Virhe: GitHub-repositoriota ei löydy polusta $localRepoPath. Tarkista polku."
+    exit 1
+}
+Copy-Item $htmlPath -Destination "$localRepoPath\index.html" -Force
+Set-Location -Path $localRepoPath
+try {
+    git add index.html
+    git commit -m "Päivitetty ComputerInfo.html $currentDateTime"
+    git push origin main
+    Write-Host "Tietokoneen tiedot päivitetty GitHubiin."
+} catch {
+    Write-Host "Virhe GitHub-pushin aikana: $_"
+    exit 1
+}
+
 # Tarkista verkkosivun saavutettavuus ennen avaamista
 $webAppUrl = "https://lively-tree-073188d03.4.azurestaticapps.net/"
 try {
