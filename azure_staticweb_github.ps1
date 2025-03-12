@@ -26,13 +26,15 @@ try {
 
     # Kerää nykyisen käyttäjän kansion koon
     $currentUserPath = $env:USERPROFILE
-    $userFolderSize = robocopy $currentUserPath NULL /L /BYTES /S | Select-String "Bytes : " | ForEach-Object { ($_ -split ":")[1].Trim() }
-    $userFolderSizeGB = [math]::Round($userFolderSize / 1GB, 2)
+    $userFolderSize = (Get-ChildItem -Path $currentUserPath -Recurse -File -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum).Sum
+    $userFolderSizeGB = [math]::Round([double]$userFolderSize / 1GB, 2)
 
-
+    $bootTime = (Get-CimInstance -ClassName Win32_OperatingSystem).LastBootUpTime
+    
     # Kerää C-kovalevyn koko
-    $cDrive = Get-PSDrive -Name C
-    $cDriveSizeGB = [math]::Round($cDrive.Used / 1GB, 2)
+    $cDrive = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"
+    $cDriveSizeGB = [math]::Round(($cDrive.Size - $cDrive.FreeSpace) / 1GB, 2)
+    
 
     # Hanki nykyinen päivämäärä ja kellonaika
     $currentDateTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
@@ -73,13 +75,14 @@ $htmlContent = @"
         <tr><th>BIOS Manufacturer</th><td>$biosInfoManufacturer</td></tr>
         <tr><th>BIOS Version</th><td>$biosInfoVersion</td></tr>
         <tr><th>BIOS Release date</th><td>$biosInfoReleaseDate</td></tr>
+        <tr><th>Last Boot time</th><td>$bootTime</td></tr>
     </table>
     <h2>Current User Folder Size</h2>
     <table>
         <tr><th>User</th><th>Size (GB)</th></tr>
         <tr><td>$env:USERNAME</td><td>$userFolderSizeGB</td></tr>
     </table>
-    <h2>C-drive Used Space</h2>
+<h2>Used Space on C: Drive</h2>
     <table>
         <tr><th>Drive</th><th>Used Space (GB)</th></tr>
         <tr><td>C:</td><td>$cDriveSizeGB</td></tr>
@@ -121,11 +124,15 @@ try {
     exit 1
 }
 
-# Tarkista verkkosivun saavutettavuus ennen avaamista
+# Odota 60 sekuntia ennen verkkosivun tarkistusta
+Write-Host "Odotetaan 1 minuutti ennen Azure-sivun avaamista..."
+Start-Sleep -Seconds 60
+
 $webAppUrl = "https://lively-tree-073188d03.4.azurestaticapps.net/"
 try {
     $response = Invoke-WebRequest -Uri $webAppUrl -UseBasicParsing
     if ($response.StatusCode -eq 200) {
+        Write-Host "Verkkosivu on saavutettavissa, avataan nyt."
         Start-Process $webAppUrl
     } else {
         Write-Host "Verkkosivua ei voitu avata, palvelin vastasi tilakoodilla: $($response.StatusCode)"
