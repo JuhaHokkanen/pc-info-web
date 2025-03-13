@@ -6,6 +6,7 @@
     <title>Computer Information</title>
     <style>
 <style>
+    <style>
     body {
         font-family: Arial, sans-serif;
     }
@@ -17,8 +18,8 @@
 
     table {
         margin: 0 auto;
-        width: 60%; /* Pienennetty leveyttä */
-        max-width: 700px; /* Varmistetaan ettei veny liikaa */
+        width: 60%; /* Pienempi leveys */
+        max-width: 700px; /* Ei veny liikaa */
         border-collapse: collapse;
     }
 
@@ -31,20 +32,21 @@
         text-align: left;
     }
 
-    /* Ensimmäisen taulukon vasen puoli */
+    /* Ensimmäisen taulukon vasen puoli (ominaisuuksien nimet) */
     table:first-of-type td:first-child {
-        background-color: #f2f2f2; /* Harmahtava tausta */
+        background-color: #e0e0e0;
         font-weight: bold;
     }
-            /* Ensimmäisen taulukon oikea puoli (koneen tiedot) */
+
+    /* Ensimmäisen taulukon oikea puoli (koneen tiedot) */
     table:first-of-type td:nth-child(2) {
-        background-color: white; /* Pidetään tiedot valkoisella pohjalla */
+        background-color: white; /* Tiedot valkoisella pohjalla */
     }
 
-    /* Kahden alimman taulukon ensimmäinen rivi */
+    /* Kahden alimman taulukon ensimmäinen rivi (otsikot) */
     table:nth-of-type(2) tr:first-child,
     table:nth-of-type(3) tr:first-child {
-        background-color: #f2f2f2;
+        background-color: #e0e0e0; 
         font-weight: bold;
     }
 
@@ -55,7 +57,6 @@
     }
 </style>
 
-    </style>
 </head>
 <body>
     <h1>Computer Information</h1>
@@ -82,10 +83,10 @@
     <h2>Used Space on C: Drive</h2>
     <table>
         <tr><th>Drive</th><th>Used Space (GB)</th></tr>
-        <tr><td>C:</td><td>529.69</td></tr>
+        <tr><td>C:</td><td>529.71</td></tr>
     </table>
     <h2>Data Retrieved At</h2>
-    <p>2025-03-13 12.30.20</p>
+    <p>2025-03-13 12.36.18</p>
     <footer>
         <p>&copy; 2025 Juha Hokkanen. All rights reserved.</p>
     </footer>
