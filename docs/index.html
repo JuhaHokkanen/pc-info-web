@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Computer Information</title>
- 
+
     <style>
+    /* Yleinen tyyli */
     body {
         font-family: Arial, sans-serif;
         background-color: #f8f9fa;
@@ -16,51 +17,60 @@
     h1, h2, p {
         text-align: center;
         font-family: "Trebuchet MS", sans-serif;
+        color: #444;
     }
 
+    /* Taulukon perusmuotoilu */
     table {
-        margin: 0 auto;
-        width: 60%; /* Pienempi leveys */
-        max-width: 700px; /* Ei veny liikaa */
+        margin: 20px auto;
+        width: 80%;
+        max-width: 700px;
         border-collapse: collapse;
+        border-radius: 10px;
+        overflow: hidden;
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         background-color: white;
     }
+
     table, th, td {
         border: 1px solid #ddd;
     }
-        
+
     th, td {
-        padding: 10px;
+        padding: 12px;
         text-align: left;
     }
 
-    /* Ensimmäisen taulukon vasen puoli (ominaisuuksien nimet) */
-    table:first-of-type td:first-child {
-        background-color: #e0e0e0; /* Harmaa tausta */
+    /* Ensimmäisen taulukon ensimmäinen sarake (ominaisuuksien nimet) */
+    table:nth-of-type(1) th:first-child,
+    table:nth-of-type(1) td:first-child {
+        background-color: #e0e0e0 !important; /* Harmaa tausta */
         font-weight: bold;
-        width: 35%;
+        width: 40%;
     }
 
-    /* Ensimmäisen taulukon oikea puoli (koneen tiedot) */
-    table:first-of-type td:nth-child(2) {
-        background-color: white; /* Pidetään tiedot valkoisella pohjalla */
-    }
-
-    /* Kahden alimman taulukon ensimmäinen rivi (otsikot) */
-    table:nth-of-type(2) tr:first-child,
-    table:nth-of-type(3) tr:first-child {
+    /* Kaikkien taulukoiden ensimmäinen rivi (otsikot) */
+    table tr:first-child th {
         background-color: #e0e0e0;
         font-weight: bold;
+        text-align: center;
     }
 
+    /* Responsiivisuus (mobiilinäytöt) */
+    @media screen and (max-width: 600px) {
+        table {
+            width: 95%;
+        }
+    }
+
+    /* Sivun alatunniste */
     footer {
         margin-top: 20px;
         font-size: 0.8em;
         text-align: center;
-        color: #666;
     }
 </style>
+
 
 </head>
 <body>
@@ -91,7 +101,7 @@
         <tr><td>C:</td><td>529.72</td></tr>
     </table>
     <h2>Data Retrieved At</h2>
-    <p>2025-03-13 12.50.07</p>
+    <p>2025-03-13 12.56.02</p>
     <footer>
         <p>&copy; 2025 Juha Hokkanen. All rights reserved.</p>
     </footer>
