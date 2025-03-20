@@ -155,18 +155,9 @@ h1, h2, p {
 </html>
 "@
 
-# Luo ja tallenna HTML-tiedosto
-$htmlPath = "C:\Temp\ComputerInfo.html"
-if (-not (Test-Path -Path "C:\Temp")) {
-    New-Item -Path "C:\" -Name "Temp" -ItemType Directory | Out-Null
-}
-$htmlContent | Out-File -FilePath $htmlPath
-Write-Host "HTML-tiedosto tallennettu polkuun $htmlPath"
-
-Start-Process "C:\Temp\ComputerInfo.html"
-
 # Päivitä tiedot GitHub-repositorioon
-$localRepoPath = "$env:USERPROFILE\OneDrive\Documents\scriptit\Uusi PC INFO"
+$localRepoPath = "C:\scriptit\Uusi PC INFO"
+
 if (-not (Test-Path -Path $localRepoPath)) {
     Write-Host "Virhe: GitHub-repositoriota ei löydy polusta $localRepoPath. Tarkista polku."
     exit 1
