@@ -1,7 +1,4 @@
-# Juha Hokkanen 8.3.2025
-# PC info -skripti, joka kerää tietoja tietokoneesta ja lähettää tiedot GitHubin kautta Azuren staattiselle sivulle.
-
-# Kerää järjestelmätiedot
+# Kerää järjestelmätiedot (sama kuin alkuperäisessä skriptissä)
 try {
     $computerName = $env:COMPUTERNAME
     $os = Get-CimInstance -ClassName Win32_OperatingSystem
@@ -35,7 +32,6 @@ try {
     $cDrive = Get-CimInstance -ClassName Win32_LogicalDisk -Filter "DeviceID='C:'"
     $cDriveSizeGB = [math]::Round(($cDrive.Size - $cDrive.FreeSpace) / 1GB, 2)
     
-
     # Hanki nykyinen päivämäärä ja kellonaika
     $currentDateTime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 } catch {
@@ -51,14 +47,77 @@ $htmlContent = @"
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Computer Information</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        h1, h2, p { text-align: center; }
-        table { margin: 0 auto; width: 90%; border-collapse: collapse; }
-        table, th, td { border: 1px solid black; }
-        th, td { padding: 8px; text-align: left; }
-        footer { margin-top: 20px; font-size: 0.8em; text-align: center; }
-    </style>
+
+        <style>
+/* Tuodaan kaksi eri fonttia Google Fontsista */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Merriweather:wght@400;700&display=swap');
+
+body {
+    font-family: 'Roboto', sans-serif; /* Oletusfontti koko sivulle */
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+/* Muutetaan h1, h2 ja p -fontiksi "Merriweather" */
+h1, h2, p {
+    font-family: 'Merriweather', serif;
+    text-align: center;
+    margin-bottom: 20px;
+}
+    /* Taulukon perusmuotoilu */
+    table {
+        margin: 20px auto;
+        width: 80%;
+        max-width: 700px;
+        border-collapse: collapse;
+        background-color: white;
+
+
+    }
+
+    table, th, td {
+        border: 1px solid black;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: left;
+    }
+
+    /* Ensimmäisen taulukon ensimmäinen sarake (ominaisuuksien nimet) */
+    table:nth-of-type(1) th:first-child,
+    table:nth-of-type(1) td:first-child {
+        background-color: #e0e0e0 !important; /* Harmaa tausta */
+        font-weight: bold;
+        width: 40%;
+    }
+
+    /* Kaikkien taulukoiden ensimmäinen rivi (otsikot) */
+    table tr:first-child th {
+        background-color: #e0e0e0;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Responsiivisuus (mobiilinäytöt) */
+    @media screen and (max-width: 600px) {
+        table {
+            width: 95%;
+        }
+    }
+
+    /* Sivun alatunniste */
+    footer {
+        margin-top: 20px;
+        font-size: 0.8em;
+        text-align: center;
+    }
+</style>
+
+
+
 </head>
 <body>
     <h1>Computer Information</h1>
@@ -82,7 +141,7 @@ $htmlContent = @"
         <tr><th>User</th><th>Size (GB)</th></tr>
         <tr><td>$env:USERNAME</td><td>$userFolderSizeGB</td></tr>
     </table>
-<h2>Used Space on C: Drive</h2>
+    <h2>Used Space on C: Drive</h2>
     <table>
         <tr><th>Drive</th><th>Used Space (GB)</th></tr>
         <tr><td>C:</td><td>$cDriveSizeGB</td></tr>
@@ -112,11 +171,22 @@ if (-not (Test-Path -Path $localRepoPath)) {
     Write-Host "Virhe: GitHub-repositoriota ei löydy polusta $localRepoPath. Tarkista polku."
     exit 1
 }
-Copy-Item $htmlPath -Destination "$localRepoPath\index.html" -Force
+
+# Määritä kohdekansio, tässä käytetään "docs" kansiota
+$destinationFolder = "$localRepoPath\docs"
+if (-not (Test-Path -Path $destinationFolder)) {
+    New-Item -Path $destinationFolder -ItemType Directory | Out-Null
+    Write-Host "Luotiin kansio: $destinationFolder"
+}
+
+# Kopioi HTML-tiedosto määritettyyn kansioon index.html-nimellä
+Copy-Item $htmlPath -Destination "$destinationFolder\index.html" -Force
+Write-Host "index.html kopioitu kansioon $destinationFolder"
+
 Set-Location -Path $localRepoPath
 try {
-    git add index.html
-    git commit -m "Päivitetty ComputerInfo.html $currentDateTime"
+    git add docs/index.html
+    git commit -m "Päivitetty index.html kansioon 'docs' - $currentDateTime"
     git push origin main
     Write-Host "Tietokoneen tiedot päivitetty GitHubiin."
 } catch {
@@ -124,19 +194,5 @@ try {
     exit 1
 }
 
-# Odota 60 sekuntia ennen verkkosivun tarkistusta
-Write-Host "Odotetaan 1 minuutti ennen Azure-sivun avaamista..."
-Start-Sleep -Seconds 60
-
-$webAppUrl = "https://lively-tree-073188d03.4.azurestaticapps.net/"
-try {
-    $response = Invoke-WebRequest -Uri $webAppUrl -UseBasicParsing
-    if ($response.StatusCode -eq 200) {
-        Write-Host "Verkkosivu on saavutettavissa, avataan nyt."
-        Start-Process $webAppUrl
-    } else {
-        Write-Host "Verkkosivua ei voitu avata, palvelin vastasi tilakoodilla: $($response.StatusCode)"
-    }
-} catch {
-    Write-Host "Virhe tarkistettaessa verkkosivua: $_"
-}
+$webAppUrl = "https://juhahokkanen.github.io/pc-info-web/"
+Start-Process $webAppUrl
